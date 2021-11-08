@@ -64,8 +64,6 @@ var createTaskEl = function(taskDataObj) {
   // increase task counter for next unique id
   taskIdCounter++;
 
-  console.log(taskDataObj);
-  console.log(taskDataObj.status);
 };
 
 var createTaskActions = function(taskId) {
@@ -174,7 +172,6 @@ var taskStatusChangeHandler = function(event) {
       tasks[i].statis = statusValue;
     }
   }
-  console.log(tasks);
 
   // save to localStorage
   saveTasks();
@@ -233,6 +230,46 @@ var saveTasks = function() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
+var loadTask = function() {
+  // Get task items form localStorage
+  tasks = localStorage.getItem("tasks");
+  tasks = JSON.parse(tasks);
+  // console.log(tasks)
+
+  for (var i = 0; i < tasks.length; i++) {
+    tasks[i].id = taskIdCounter;
+
+    var listItemEl = document.createElement("li");
+    listItemEl.className = "task-item";
+    listItemEl.setAttribute("data-task-d", tasks[i].id);
+
+    var taskInfoEl = document.createElement("div");
+    taskInfoEl.className = "task-info";
+    taskInfoEl.innerHTML = "<h3 class='task-name'>" + tasks[i].name + "</h3><span class='task-type'>" + tasks[i].type + "</span>";
+    listItemEl.appendChild(taskInfoEl);
+
+    var taskActionsEl = createTaskActions(tasks[i].id);
+    listItemEl.appendChild(taskActionsEl);
+
+    
+    if (tasks[i].status === tasksToDoEl) {
+      listItemEl.querySelector("select[name='status-change']").selectedIndex = 0;
+      tasksToDoEl.appendChild(listItemEl);
+    } else if (tasks[i].status = tasksInProgressEl) {
+      listItemEl.querySelector("select[name='status-change']").selectedIndex = 1;
+      tasksInProgressEl.appendChild(listItemEl);
+    } else if (tasks[i].status = tasksCompletedEl) {
+      listItemEl.querySelector("select[name='status-change']").selectedIndex = 2;
+      tasksCompletedEl.appendChild(listItemEl);
+    } 
+    
+    taskIdCounter++;
+    
+    console.log(listItemEl);
+  }
+
+}
+
 // Create a new task
 formEl.addEventListener("submit", taskFormHandler);
 
@@ -241,3 +278,4 @@ pageContentEl.addEventListener("click", taskButtonHandler);
 
 // for changing the status
 pageContentEl.addEventListener("change", taskStatusChangeHandler);
+
